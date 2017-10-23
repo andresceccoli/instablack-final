@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_feed"
+        android:icon="@drawable/archive"
+        android:title="@string/title_feed"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/navigation_usuarios"
+        android:icon="@drawable/user"
+        android:title="@string/title_usuarios" />
+
+    <item
+        android:id="@+id/navigation_nuevo_post"
+        android:icon="@drawable/camera_0"
+        android:title="@string/title_nuevo_post" />
+
+    <item
+        android:id="@+id/navigation_cuenta"
+        android:icon="@drawable/setting"
+        android:title="@string/title_cuenta" />
+
+</menu>
