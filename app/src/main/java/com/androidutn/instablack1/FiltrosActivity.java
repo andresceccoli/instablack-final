@@ -3,6 +3,7 @@ package com.androidutn.instablack1;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -80,7 +81,7 @@ public class FiltrosActivity extends BaseActivity {
         thumbnails.add(Thumbnail.getContraste(this, thumb));
         thumbnails.add(Thumbnail.getBrillo(this, thumb));
         thumbnails.add(Thumbnail.getTinta(this, thumb));
-        thumbnails.add(Thumbnail.getHighlight(this, thumb));
+        thumbnails.add(Thumbnail.getHardLight(this, thumb));
 
         for (int i = 0; i < thumbnails.size(); i++) {
             mThumbs.get(i).setImageBitmap(thumbnails.get(i).bitmap);
@@ -102,28 +103,59 @@ public class FiltrosActivity extends BaseActivity {
 
     @OnClick(R.id.filtros_aceptar)
     public void onAceptar() {
-        try {
-            File archivo = new File(getExternalCacheDir(), UUID.randomUUID().toString());
-            Uri uri = Uri.fromFile(archivo);
+        AsyncTask<Void, Void, Uri> task = new AsyncTask<Void, Void, Uri>() {
+            @Override
+            protected Uri doInBackground(Void... voids) {
+                try {
+                    File archivo = new File(getExternalCacheDir(), UUID.randomUUID().toString());
+                    Uri uri = Uri.fromFile(archivo);
 
-            // aplicar filtro a imagen original
-            Bitmap bitmap = ImageUtils.cargarBitmap(FiltrosActivity.this, uriOriginal, MAX_SIZE);
-            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-            bitmap = ImageUtils.convertirGrayscale(bitmap);
-            if (filtroSeleccionado != null) {
-                bitmap = filtroSeleccionado.processFilter(bitmap);
+                    // aplicar filtro a imagen original
+                    Bitmap bitmap = ImageUtils.cargarBitmap(FiltrosActivity.this, uriOriginal, MAX_SIZE);
+                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                    bitmap = ImageUtils.convertirGrayscale(bitmap);
+                    if (filtroSeleccionado != null) {
+                        bitmap = filtroSeleccionado.processFilter(bitmap);
+                    }
+
+                    OutputStream out = new FileOutputStream(archivo);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
+                    out.close();
+
+                    return uri;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
 
-            OutputStream out = new FileOutputStream(archivo);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
-            out.close();
+            @Override
+            protected void onPostExecute(Uri uri) {
+                unblockUI();
 
-            Intent publicacion = new Intent(this, PublicacionActivity.class);
-            publicacion.putExtra(PublicacionActivity.EXTRA_URI, uri);
-            startActivityForResult(publicacion, REQUEST_PUBLICAR);
-        } catch (IOException e) {
-            e.printStackTrace();
-            mostrarMensaje(e);
+                if (uri != null) {
+                    Intent publicacion = new Intent(FiltrosActivity.this, PublicacionActivity.class);
+                    publicacion.putExtra(PublicacionActivity.EXTRA_URI, uri);
+                    startActivityForResult(publicacion, REQUEST_PUBLICAR);
+                } else {
+                    mostrarMensaje(R.string.publicacion_error);
+                }
+            }
+        };
+
+        blockUI();
+        task.execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_PUBLICAR) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
         }
     }
 }

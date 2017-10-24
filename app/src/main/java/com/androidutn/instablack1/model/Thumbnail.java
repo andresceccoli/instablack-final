@@ -58,7 +58,7 @@ public class Thumbnail {
         return new Thumbnail(filter.processFilter(Bitmap.createBitmap(bitmap)), context.getString(R.string.filtro_tinta), filter);
     }
 
-    public static Thumbnail getHighlight(Context context, Bitmap bitmap) {
+    public static Thumbnail getHardLight(Context context, Bitmap bitmap) {
         Filter filter = new Filter();
         filter.addSubFilter(new SubFilter() {
             private Object tag = "";
@@ -118,7 +118,7 @@ public class Thumbnail {
                 this.tag = tag;
             }
         });
-        return new Thumbnail(filter.processFilter(bitmap), context.getString(R.string.filtro_highlight), filter);
+        return new Thumbnail(filter.processFilter(bitmap), context.getString(R.string.filtro_hard_light), filter);
     }
 
     private Thumbnail(Bitmap bitmap, String nombre, Filter filtro) {

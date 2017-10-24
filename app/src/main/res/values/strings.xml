@@ -17,5 +17,6 @@
     <string name="filtro_contraste">Contraste</string>
     <string name="filtro_brillo">Brillo</string>
     <string name="filtro_tinta">Tinta</string>
-    <string name="filtro_highlight">Highlight</string>
+    <string name="filtro_hard_light">Hard Light</string>
+    <string name="publicacion_error">Ocurrió un error al publicar la imagen</string>
 </resources>

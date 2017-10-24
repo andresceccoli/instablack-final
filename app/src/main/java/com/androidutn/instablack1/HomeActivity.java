@@ -28,8 +28,11 @@ public class HomeActivity extends BaseActivity {
 
     private static final int REQUEST_PERMISSIONS = 200;
     private static final int REQUEST_IMAGEN = 201;
+    private static final int REQUEST_FILTROS = 202;
     private TextView mTextMessage;
     private Uri mArchivoUri;
+
+    private BottomNavigationViewEx mNavigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -61,13 +64,13 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        BottomNavigationViewEx navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mNavigation = findViewById(R.id.navigation);
+        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        navigation.enableAnimation(false);
-        navigation.enableItemShiftingMode(false);
-        navigation.enableShiftingMode(false);
-        navigation.setTextVisibility(false);
+        mNavigation.enableAnimation(false);
+        mNavigation.enableItemShiftingMode(false);
+        mNavigation.enableShiftingMode(false);
+        mNavigation.setTextVisibility(false);
 
         if (savedInstanceState != null) {
             mArchivoUri = savedInstanceState.getParcelable("archivoUri");
@@ -157,9 +160,11 @@ public class HomeActivity extends BaseActivity {
                 if (mArchivoUri != null) {
                     Intent filtros = new Intent(this, FiltrosActivity.class);
                     filtros.putExtra(FiltrosActivity.EXTRA_URI, mArchivoUri);
-                    startActivity(filtros);
+                    startActivityForResult(filtros, REQUEST_FILTROS);
                 }
             }
+        } else if (requestCode == REQUEST_FILTROS) {
+            mNavigation.setCurrentItem(0);
         }
     }
 }

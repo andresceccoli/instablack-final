@@ -38,9 +38,11 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.zomato:androidphotofilters:1.0.1'
+    compile 'com.google.firebase:firebase-storage:11.4.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
+
 
 
 
