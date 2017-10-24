@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.androidutn.instablack1">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -23,8 +23,10 @@
         </activity>
         <activity
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home">
-        </activity>
+            android:label="@string/title_activity_home" />
+        <activity android:name=".FiltrosActivity" />
+        <activity android:name=".PublicacionActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -11,4 +11,11 @@
     <string name="title_cuenta">Cuenta</string>
     <string name="seguir_ok">Agregado</string>
     <string name="title_picker">Tomar imagen desde</string>
+    <string name="continuar">Continuar</string>
+    <string name="filtro_original">Original</string>
+    <string name="filtro_vintage">Vintage</string>
+    <string name="filtro_contraste">Contraste</string>
+    <string name="filtro_brillo">Brillo</string>
+    <string name="filtro_tinta">Tinta</string>
+    <string name="filtro_highlight">Highlight</string>
 </resources>

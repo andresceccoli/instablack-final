@@ -68,6 +68,16 @@ public class HomeActivity extends BaseActivity {
         navigation.enableItemShiftingMode(false);
         navigation.enableShiftingMode(false);
         navigation.setTextVisibility(false);
+
+        if (savedInstanceState != null) {
+            mArchivoUri = savedInstanceState.getParcelable("archivoUri");
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("archivoUri", mArchivoUri);
     }
 
     private void mostrarUsuarios() {
@@ -133,10 +143,10 @@ public class HomeActivity extends BaseActivity {
 
         if (requestCode == REQUEST_IMAGEN) {
             if (resultCode == RESULT_OK) {
-                boolean camara;
-                if (data.getData() == null) {
+                boolean camara = false;
+                if (data == null || data.getData() == null) {
                     camara = true;
-                } else {
+                } else if (data.getAction() != null) {
                     camara = data.getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE);
                 }
 
@@ -145,7 +155,9 @@ public class HomeActivity extends BaseActivity {
                 }
 
                 if (mArchivoUri != null) {
-
+                    Intent filtros = new Intent(this, FiltrosActivity.class);
+                    filtros.putExtra(FiltrosActivity.EXTRA_URI, mArchivoUri);
+                    startActivity(filtros);
                 }
             }
         }
