@@ -135,4 +135,8 @@ public class FirebaseUtils {
             }
         });
     }
+
+    public static void buscarUsuario(String uid, ValueEventListener listener) {
+        FirebaseDatabase.getInstance().getReference("Usuarios").child(uid).addValueEventListener(listener);
+    }
 }

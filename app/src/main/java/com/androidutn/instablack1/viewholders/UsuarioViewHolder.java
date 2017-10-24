@@ -1,4 +1,4 @@
-package com.androidutn.instablack1;
+package com.androidutn.instablack1.viewholders;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.androidutn.instablack1.R;
 import com.androidutn.instablack1.model.Usuario;
 import com.squareup.picasso.Picasso;
 

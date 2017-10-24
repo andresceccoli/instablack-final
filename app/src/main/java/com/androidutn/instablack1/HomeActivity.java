@@ -41,6 +41,7 @@ public class HomeActivity extends BaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_feed:
+                    mostrarFeed();
                     return true;
                 case R.id.navigation_usuarios:
                     mostrarUsuarios();
@@ -75,12 +76,23 @@ public class HomeActivity extends BaseActivity {
         if (savedInstanceState != null) {
             mArchivoUri = savedInstanceState.getParcelable("archivoUri");
         }
+
+        mostrarFeed();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("archivoUri", mArchivoUri);
+    }
+
+    private void mostrarFeed() {
+        FeedFragment fragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag("feed");
+        if (fragment == null) {
+            fragment = FeedFragment.newInstance();
+        }
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment, "feed").commit();
     }
 
     private void mostrarUsuarios() {

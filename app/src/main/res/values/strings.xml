@@ -19,4 +19,8 @@
     <string name="filtro_tinta">Tinta</string>
     <string name="filtro_hard_light">Hard Light</string>
     <string name="publicacion_error">Ocurrió un error al publicar la imagen</string>
+    <string name="like_count">Le gusta a %1$d personas</string>
+    <string name="like_count_1">Le gusta a 1 persona</string>
+    <string name="comentarios_count">Ver %1$d comentarios</string>
+    <string name="comentarios_count_1">Ver comentario</string>
 </resources>

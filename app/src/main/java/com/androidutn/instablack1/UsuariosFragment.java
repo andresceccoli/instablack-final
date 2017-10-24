@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.androidutn.instablack1.firebase.FirebaseUtils;
 import com.androidutn.instablack1.model.Usuario;
+import com.androidutn.instablack1.viewholders.UsuarioViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,16 +40,12 @@ public class UsuariosFragment extends Fragment {
 
     public static UsuariosFragment newInstance() {
         UsuariosFragment fragment = new UsuariosFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
