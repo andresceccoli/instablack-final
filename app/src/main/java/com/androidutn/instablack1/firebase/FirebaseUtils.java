@@ -2,6 +2,7 @@ package com.androidutn.instablack1.firebase;
 
 import android.support.annotation.Nullable;
 
+import com.androidutn.instablack1.model.Comentario;
 import com.androidutn.instablack1.model.Post;
 import com.androidutn.instablack1.model.PostRef;
 import com.androidutn.instablack1.model.Usuario;
@@ -137,6 +138,21 @@ public class FirebaseUtils {
     }
 
     public static void buscarUsuario(String uid, ValueEventListener listener) {
-        FirebaseDatabase.getInstance().getReference("Usuarios").child(uid).addValueEventListener(listener);
+        FirebaseDatabase.getInstance().getReference("Usuarios").child(uid).addListenerForSingleValueEvent(listener);
+    }
+
+    public static void buscarPost(String id, ValueEventListener listener) {
+        FirebaseDatabase.getInstance().getReference("Posts").child(id).addListenerForSingleValueEvent(listener);
+    }
+
+    public static void guardarComentario(String postId, Comentario comentario, DatabaseReference.CompletionListener listener) {
+        final String authUid = FirebaseAuth.getInstance().getUid();
+        if (authUid != null) {
+            DatabaseReference comentariosRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(postId);
+            final String key = comentariosRef.push().getKey();
+            comentario.setId(key);
+
+            comentariosRef.child(key).setValue(comentario, listener);
+        }
     }
 }

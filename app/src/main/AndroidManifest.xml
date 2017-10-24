@@ -25,8 +25,10 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home" />
         <activity android:name=".FiltrosActivity" />
-        <activity android:name=".PublicacionActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".PublicacionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".PostActivity"></activity>
     </application>
 
 </manifest>
