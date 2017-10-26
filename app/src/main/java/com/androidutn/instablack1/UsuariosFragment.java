@@ -1,6 +1,5 @@
 package com.androidutn.instablack1;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +27,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class UsuariosFragment extends Fragment {
-
-    private UsuariosFragmentListener mListener;
 
     @BindView(R.id.list) RecyclerView mList;
     @BindView(R.id.busqueda) EditText mBusqueda;
@@ -126,23 +123,4 @@ public class UsuariosFragment extends Fragment {
         adapter.stopListening();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof UsuariosFragmentListener) {
-//            mListener = (UsuariosFragmentListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement UsuariosFragmentListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface UsuariosFragmentListener {
-    }
 }

@@ -58,6 +58,7 @@ public class FiltrosActivity extends BaseActivity {
         }
 
         cargarFiltros();
+        seleccionarImagen(0);
     }
 
     @OnClick({R.id.filtros_original, R.id.filtros_1, R.id.filtros_2, R.id.filtros_3, R.id.filtros_4, R.id.filtros_5})
@@ -69,7 +70,7 @@ public class FiltrosActivity extends BaseActivity {
     }
 
     private void cargarFiltros() {
-        Bitmap bm = ImageUtils.cargarBitmap(FiltrosActivity.this, uriOriginal, MAX_SIZE);
+        Bitmap bm = ImageUtils.cargarBitmap(this, uriOriginal, MAX_SIZE);
         bitmapBase = ImageUtils.generarThumbnail(bm, 600);
         bitmapBase = ImageUtils.convertirGrayscale(bitmapBase);
 
@@ -86,8 +87,6 @@ public class FiltrosActivity extends BaseActivity {
         for (int i = 0; i < thumbnails.size(); i++) {
             mThumbs.get(i).setImageBitmap(thumbnails.get(i).bitmap);
         }
-
-        seleccionarImagen(0);
     }
 
     private void seleccionarImagen(int imagen) {
@@ -111,9 +110,7 @@ public class FiltrosActivity extends BaseActivity {
                     Uri uri = Uri.fromFile(archivo);
 
                     // aplicar filtro a imagen original
-                    Bitmap bitmap = ImageUtils.cargarBitmap(FiltrosActivity.this, uriOriginal, MAX_SIZE);
-                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    bitmap = ImageUtils.convertirGrayscale(bitmap);
+                    Bitmap bitmap = getBitmapOriginal();
                     if (filtroSeleccionado != null) {
                         bitmap = filtroSeleccionado.processFilter(bitmap);
                     }
@@ -145,6 +142,13 @@ public class FiltrosActivity extends BaseActivity {
 
         blockUI();
         task.execute();
+    }
+
+    private Bitmap getBitmapOriginal() {
+        Bitmap bitmap = ImageUtils.cargarBitmap(this, uriOriginal, MAX_SIZE);
+        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        bitmap = ImageUtils.convertirGrayscale(bitmap);
+        return bitmap;
     }
 
     @Override
