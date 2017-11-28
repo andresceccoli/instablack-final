@@ -2,6 +2,7 @@ package com.androidutn.instablack1;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -37,10 +38,12 @@ import butterknife.OnClick;
 public class PostActivity extends BaseActivity {
 
     public static final String EXTRA_POST_ID = "postId";
+    public static final String EXTRA_SCROLL_COMENTARIOS = "scrollComentarios";
 
     @BindView(R.id.post_autor_imagen) ImageView mAutorImagen;
     @BindView(R.id.post_autor_nombre) TextView mAutorNombre;
     @BindView(R.id.post_imagen) ImageView mImagen;
+    @BindView(R.id.post_like) ImageView mLike;
     @BindView(R.id.post_like_count) TextView mLikeCount;
     @BindView(R.id.post_texto) TextView mTexto;
     @BindView(R.id.post_fecha) TextView mFecha;
@@ -49,6 +52,7 @@ public class PostActivity extends BaseActivity {
     @BindView(R.id.comentario_texto) EditText mComentarioTexto;
 
     private Post post;
+    private boolean scrollComentarios;
     private FirebaseRecyclerAdapter<Comentario, ComentarioViewHolder> adapterComentarios;
 
     @Override
@@ -62,6 +66,8 @@ public class PostActivity extends BaseActivity {
 
         if (postId == null)
             return;
+
+        scrollComentarios = getIntent().getBooleanExtra(EXTRA_SCROLL_COMENTARIOS, false);
 
         blockUI();
 
@@ -133,6 +139,36 @@ public class PostActivity extends BaseActivity {
         }
 
         mComentariosCount.setVisibility(View.GONE);
+
+        FirebaseDatabase.getInstance().getReference("Likes")
+                .child(post.getId())
+                .child(FirebaseAuth.getInstance().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Boolean userLike = (Boolean) dataSnapshot.getValue();
+                        if (userLike != null && userLike) {
+                            mLike.setColorFilter(ContextCompat.getColor(PostActivity.this, R.color.colorAccent));
+                        } else {
+                            mLike.setColorFilter(ContextCompat.getColor(PostActivity.this, android.R.color.primary_text_dark));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+    }
+
+    @OnClick(R.id.post_like)
+    public void onLike() {
+        FirebaseUtils.like(post.getId(), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    mostrarMensaje(databaseError.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -145,6 +181,12 @@ public class PostActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         adapterComentarios.stopListening();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO: scroll a comentarios
     }
 
     @OnClick(R.id.comentario_enviar)

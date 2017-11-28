@@ -50,8 +50,7 @@ public class HomeActivity extends BaseActivity {
                     seleccionarImagen();
                     return true;
                 case R.id.navigation_cuenta:
-                    FirebaseAuth.getInstance().signOut();
-                    finish();
+                    mostrarPerfil();
                     return true;
             }
             return false;
@@ -102,6 +101,15 @@ public class HomeActivity extends BaseActivity {
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment, "usuarios").commit();
+    }
+
+    private void mostrarPerfil() {
+        PerfilFragment fragment = (PerfilFragment) getSupportFragmentManager().findFragmentByTag("perfil");
+        if (fragment == null) {
+            fragment = PerfilFragment.newInstance(FirebaseAuth.getInstance().getUid());
+        }
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment, "perfil").commit();
     }
 
     private void seleccionarImagen() {

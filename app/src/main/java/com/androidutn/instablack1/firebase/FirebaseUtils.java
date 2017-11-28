@@ -12,6 +12,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 /**
@@ -142,7 +144,7 @@ public class FirebaseUtils {
     }
 
     public static void buscarPost(String id, ValueEventListener listener) {
-        FirebaseDatabase.getInstance().getReference("Posts").child(id).addListenerForSingleValueEvent(listener);
+        FirebaseDatabase.getInstance().getReference("Posts").child(id).addValueEventListener(listener);
     }
 
     public static void guardarComentario(String postId, Comentario comentario, DatabaseReference.CompletionListener listener) {
@@ -153,6 +155,77 @@ public class FirebaseUtils {
             comentario.setId(key);
 
             comentariosRef.child(key).setValue(comentario, listener);
+        }
+    }
+
+    public static void like(final String postId, final DatabaseReference.CompletionListener listener) {
+        final String authUid = FirebaseAuth.getInstance().getUid();
+        if (authUid != null) {
+            FirebaseDatabase.getInstance().getReference("Likes")
+                    .child(postId).child(authUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean userLike = (Boolean) dataSnapshot.getValue();
+
+                    final int valor = (userLike == null || !userLike) ? 1 : -1;
+
+                    DatabaseReference.CompletionListener completionListener = new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError == null)
+                                actualizarLikeCount(postId, valor, listener);
+                            else if (listener != null)
+                                listener.onComplete(databaseError, databaseReference);
+                        }
+                    };
+
+                    if (userLike == null || !userLike) {
+                        dataSnapshot.getRef().setValue(true, completionListener);
+                    } else {
+                        dataSnapshot.getRef().removeValue(completionListener);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    if (listener != null)
+                        listener.onComplete(databaseError, null);
+                }
+            });
+        }
+    }
+
+    private static void actualizarLikeCount(String postId, final int valor, final DatabaseReference.CompletionListener listener) {
+        FirebaseDatabase.getInstance().getReference("Posts").child(postId)
+                .runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        Post p = mutableData.getValue(Post.class);
+
+                        if (p == null) {
+                            return Transaction.success(mutableData);
+                        }
+
+                        p.setLikes(p.getLikes() + valor);
+                        mutableData.setValue(p);
+
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                        if (listener != null)
+                            listener.onComplete(databaseError, null);
+                    }
+                });
+    }
+
+
+    public static void dejarDeSeguir(final String uid) {
+        final String authUid = FirebaseAuth.getInstance().getUid();
+        if (authUid != null) {
+            FirebaseDatabase.getInstance().getReference("Siguiendo").child(authUid).child(uid).removeValue();
+            FirebaseDatabase.getInstance().getReference("Seguidores").child(uid).child(authUid).removeValue();
         }
     }
 }

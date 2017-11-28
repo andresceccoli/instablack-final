@@ -2,19 +2,23 @@ package com.androidutn.instablack1.viewholders;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.androidutn.instablack1.PerfilActivity;
 import com.androidutn.instablack1.PostActivity;
 import com.androidutn.instablack1.R;
 import com.androidutn.instablack1.firebase.FirebaseUtils;
 import com.androidutn.instablack1.model.Post;
 import com.androidutn.instablack1.model.Usuario;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +35,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.post_autor_imagen) ImageView mAutorImagen;
     @BindView(R.id.post_autor_nombre) TextView mAutorNombre;
     @BindView(R.id.post_imagen) ImageView mImagen;
+    @BindView(R.id.post_like) ImageView mLike;
     @BindView(R.id.post_like_count) TextView mLikeCount;
     @BindView(R.id.post_texto) TextView mTexto;
     @BindView(R.id.post_fecha) TextView mFecha;
@@ -44,10 +49,30 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    @OnClick({R.id.post_imagen, R.id.post_texto, R.id.post_comentar, R.id.post_comentarios_count})
+    @OnClick({R.id.post_imagen, R.id.post_texto, R.id.post_comentar})
     public void onClick(View v) {
         Intent i = new Intent(itemView.getContext(), PostActivity.class);
         i.putExtra(PostActivity.EXTRA_POST_ID, post.getId());
+        itemView.getContext().startActivity(i);
+    }
+
+    @OnClick({R.id.post_autor_nombre, R.id.post_autor_imagen})
+    public void onPerfil() {
+        Intent i = new Intent(itemView.getContext(), PerfilActivity.class);
+        i.putExtra(PerfilActivity.EXTRA_UID, post.getAutorUid());
+        itemView.getContext().startActivity(i);
+    }
+
+    @OnClick(R.id.post_like)
+    public void onLike() {
+        FirebaseUtils.like(post.getId(), null);
+    }
+
+    @OnClick({R.id.post_comentar, R.id.post_comentarios_count})
+    public void onComentariosCount() {
+        Intent i = new Intent(itemView.getContext(), PostActivity.class);
+        i.putExtra(PostActivity.EXTRA_POST_ID, post.getId());
+        i.putExtra(PostActivity.EXTRA_SCROLL_COMENTARIOS, true);
         itemView.getContext().startActivity(i);
     }
 
@@ -95,6 +120,24 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         } else {
             mComentariosCount.setVisibility(View.GONE);
         }
+
+        FirebaseDatabase.getInstance().getReference("Likes")
+                .child(post.getId())
+                .child(FirebaseAuth.getInstance().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Boolean userLike = (Boolean) dataSnapshot.getValue();
+                        if (userLike != null && userLike) {
+                            mLike.setColorFilter(ContextCompat.getColor(itemView.getContext(), R.color.colorAccent));
+                        } else {
+                            mLike.setColorFilter(ContextCompat.getColor(itemView.getContext(), android.R.color.primary_text_dark));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
     }
 
 }
